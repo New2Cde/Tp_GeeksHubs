@@ -1,0 +1,16 @@
+management:
+  endpoints:
+    web:
+      actuator:
+        enabled: true
+        base-path: /actuator
+        exposure:
+          include: '*'
+          metrics: true
+
+  endpoint:
+    prometheus:
+      enabled: true
+      metrics:
+        enabled: true
+        

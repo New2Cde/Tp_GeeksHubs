@@ -1,0 +1,113 @@
+version: '3.8'  
+services:
+# Deployment Database, Front & back end Stacks
+  kanban-postgres:
+    image: postgres:9.6-alpine
+    container_name: kanban-postgres
+    restart: unless-stopped
+    volumes:
+      - kanban-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=kanban
+      - POSTGRES_USER=kanban
+      - POSTGRES_PASSWORD=kanban
+
+  kanban-app:
+    build: ./kanban-app
+    container_name: kanban-app
+    restart: unless-stopped
+    environment:
+      - DB_SERVER=kanban-postgres
+      - POSTGRES_DB=kanban
+      - POSTGRES_USER=kanban
+      - POSTGRES_PASSWORD=kanban
+    ports:
+      - 8080:8080
+    links:
+      - kanban-postgres
+
+  kanban-ui:
+    build: ./kanban-ui
+    container_name: kanban-ui
+    restart: unless-stopped
+    ports:
+      - 4200:80
+    links:
+      - kanban-app
+# End Deployment Database, Front & back end 
+
+# Stack observability
+  grafana:
+      image: grafana/grafana:latest
+      container_name: grafana
+      user: root
+      ports:
+        - 3000:3000
+      restart: unless-stopped
+      volumes:
+        #- './var/grafana/grafana_data:/var/lib/grafana'
+        - './grafana/provisioning/dashboards/default.yml:/grafana/provisioning/dashboards/default.yml'
+        - './grafana/provisioning/datasources/datasource.yml:/grafana/provisioning/datasources/datasources.yml'
+      environment:
+        - GF_SECURITY_ADMIN_PASSWORD=foobar
+        - GF_USERS_ALLOW_SIGN_UP=false
+        - GF_PATHS_PROVISIONING=/grafana/provisioning 
+      depends_on:
+        - prometheus
+        
+  prometheus:
+      image: prom/prometheus:latest
+      container_name: prometheus
+      ports:
+        - 9090:9090
+      restart: unless-stopped
+      command: 
+        --config.file=/etc/prometheus/prometheus.yml
+        --storage.tsdb.path=/prometheus
+        --web.console.libraries=/etc/prometheus/console_libraries
+        --web.console.templates=/etc/prometheus/consoles
+        --web.enable-lifecycle
+      volumes:
+        - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        - /var/prometheus/prometheus_data:/prometheus"
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    restart: unless-stopped
+    ports:
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://kanban:kanban@kanban-postgres:5432/kanban?sslmode=disable
+    
+      - kanban-postgres
+      - prometheus
+    depends_on:
+      - kanban-postgres
+  
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter
+    volumes:
+      - /:/host:ro,rslave
+    command:
+      - '--path.rootfs=/host'
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: pushgateway
+    restart: unless-stopped
+    ports:
+      - 9091:9091
+    depends_on:
+      - prometheus
+# End Stack observability
+
+volumes:
+  kanban-data:
+  grafana-data: 
+  prometheus_data:
+  
+  
