@@ -49,11 +49,15 @@ services:
       volumes:
         #- './var/grafana/grafana_data:/var/lib/grafana'
         - './grafana/provisioning/dashboards/default.yml:/grafana/provisioning/dashboards/default.yml'
+        - './grafana/provisioning/dashboards/:/etc/grafana/provisioning/dashboards/'
+        - './grafana/provisioning/datasources/:/etc/grafana/provisioning/datasources/'
         - './grafana/provisioning/datasources/datasource.yml:/grafana/provisioning/datasources/datasources.yml'
+        
+
       environment:
         - GF_SECURITY_ADMIN_PASSWORD=foobar
         - GF_USERS_ALLOW_SIGN_UP=false
-        - GF_PATHS_PROVISIONING=/grafana/provisioning 
+        - GF_PATHS_PROVISIONING=/grafana/provisioning #datasource up#
       depends_on:
         - prometheus
         

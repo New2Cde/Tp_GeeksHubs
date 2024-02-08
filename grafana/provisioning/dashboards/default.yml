@@ -19,7 +19,7 @@ providers:
     allowUiUpdates: false
     options:
       # <string, required> path to dashboard files on disk. Required when using the 'file' type
-      path: /grafana/provisioning/dashboards
+      path: /etc/grafana/provisioning/dashboards
       # <bool> use folder names from filesystem to create folders in Grafana
       foldersFromFilesStructure: true
 
@@ -27,7 +27,7 @@ dashboards:
     postgres-postgres:
       file: 14114.json
     node-exporter:
-      file: /grafana/provisioning/dashboards/10242.json
+      file: 10242.json
 
 
 
