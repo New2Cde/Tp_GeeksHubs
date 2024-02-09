@@ -52,7 +52,6 @@ services:
         - './grafana/provisioning/dashboards/:/etc/grafana/provisioning/dashboards/'
         - './grafana/provisioning/datasources/:/etc/grafana/provisioning/datasources/'
         - './grafana/provisioning/datasources/datasource.yml:/grafana/provisioning/datasources/datasources.yml'
-        
 
       environment:
         - GF_SECURITY_ADMIN_PASSWORD=foobar
@@ -76,6 +75,8 @@ services:
       volumes:
         - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
         - /var/prometheus/prometheus_data:/prometheus"
+      depends_on:
+        - cadvisor
 
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
@@ -99,14 +100,27 @@ services:
     command:
       - '--path.rootfs=/host'
 
-  pushgateway:
-    image: prom/pushgateway:latest
-    container_name: pushgateway
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
     restart: unless-stopped
     ports:
-      - 9091:9091
-    depends_on:
-      - prometheus
+      - 8070:8080
+    #network_mode: "host"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+   
+  # pushgateway:
+  #   image: prom/pushgateway:latest
+  #   container_name: pushgateway
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9091:9091
+  #   depends_on:
+  #     - prometheus
 # End Stack observability
 
 volumes:
