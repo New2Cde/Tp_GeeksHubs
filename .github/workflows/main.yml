@@ -27,5 +27,5 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: docker push new2cde/tp_geekhubs:latest
-      - name: Deploy
-        run: echo "Pendiente de implementar el deploy en k8s"
+      - name: Deploy Pending
+        run: echo "Pendiente de implementar el deploy en k8s cloud"
