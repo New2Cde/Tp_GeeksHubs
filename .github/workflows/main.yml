@@ -28,5 +28,3 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: docker push my-dockerhub-username/my-repo-name:latest
 
-      - name: Echo pending action message
-        run: echo "Pending action: deploy to the cloud"
