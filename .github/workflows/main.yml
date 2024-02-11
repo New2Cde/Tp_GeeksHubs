@@ -23,7 +23,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Tag Docker image
-        run: docker tag tp_geeksHubs:latest new2cde/tp_geekhubs:latest
+        run: docker tag tp_geekshubs:latest new2cde/tp_geekhubs:latest
 
       - name: Push Docker image to Docker Hub
         run: docker push new2cde/tp_geekhubs:latest
