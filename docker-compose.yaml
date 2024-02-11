@@ -54,7 +54,8 @@ services:
         - './grafana/provisioning/datasources/datasource.yml:/grafana/provisioning/datasources/datasources.yml'
 
       environment:
-        - GF_SECURITY_ADMIN_PASSWORD=foobar
+        - GF_SECURITY_ADMIN_PASSWORD=fighters
+        - GF_SECURITY_ADMIN_USER=foo
         - GF_USERS_ALLOW_SIGN_UP=false
         - GF_PATHS_PROVISIONING=/grafana/provisioning #datasource up#
       depends_on:
