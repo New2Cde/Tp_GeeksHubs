@@ -16,8 +16,8 @@ jobs:
       - name: Deploy Containers
         run: docker-compose up -d
       
-      - name: Build Docker image  
-        run: docker build . --tag tp_geekshubs:latest
+      - name: Deploy and Build Docker image  
+        run: docker build . --file Dockerfile --tag tp_geekshubs:latest .
 
       - name: Log in to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
