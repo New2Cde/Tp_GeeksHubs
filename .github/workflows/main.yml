@@ -1,0 +1,32 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+
+      - name: Build Docker image
+        run: docker-compose build
+
+      - name: Log in to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Tag Docker image
+        run: docker tag my-local-image:latest my-dockerhub-username/my-repo-name:latest
+
+      - name: Push Docker image to Docker Hub
+        run: docker push my-dockerhub-username/my-repo-name:latest
+
+      - name: Echo pending action message
+        run: echo "Pending action: deploy to the cloud"
